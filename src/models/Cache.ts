@@ -1,3 +1,4 @@
+import Mongoose, { Schema } from "mongoose";
 import { CACHE_MAX_AGE } from "../config/Environment";
 
 export const SchemaName = "Cache";
@@ -17,3 +18,9 @@ export const CacheSchema = {
   key: { type: String, required: true, index: true },
   expires: { type: Date, expires: CACHE_MAX_AGE },
 };
+
+const schema = new Schema(CacheSchema, {
+  timestamps: true,
+});
+
+export const CacheModel = Mongoose.model(SchemaName, schema);

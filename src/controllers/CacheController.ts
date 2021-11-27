@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { getModel } from "../config/Database";
-import { ICache, SchemaName } from "../models/Cache";
+import { ICache, CacheModel } from "../models/Cache";
 import { log } from "../helpers/Logger";
 import { generateText } from "../helpers/TextGenerator";
 import { CACHE_MAX_AGE, CACHE_MAX_ENTRIES } from "../config/Environment";
@@ -21,7 +20,7 @@ const getExpiration = () => {
 };
 
 /**
- * @param records : Array<ICache>
+ * @param records : Array
  * @param filter : Record
  * @returns : number
  */
@@ -63,7 +62,7 @@ const getCounter = (records: ICache[], filter: Record) =>
  */
 const upsertKey = async (filter: Record, data: Record) => {
   let _filter = filter;
-  const Cache = getModel<ICache>(SchemaName);
+  const Cache = CacheModel;
 
   // Get existing record in descending order by  time
   const records = await Cache.find(
@@ -143,7 +142,7 @@ export const getData = async (
     const query = {
       key,
     };
-    const Cache = getModel<ICache>(SchemaName);
+    const Cache = CacheModel;
 
     // Get existing record and update expiration time
     let data = await Cache.findOne(query);
@@ -186,7 +185,7 @@ export const getKeys = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const Cache = getModel<ICache>(SchemaName);
+    const Cache = CacheModel;
     const data = await Cache.find({}, "key -_id")
       .sort("-updatedAt")
       .limit(CACHE_MAX_ENTRIES);
@@ -217,7 +216,7 @@ export const removeKey = async (
 ): Promise<Response> => {
   try {
     const { key } = req.params;
-    const Cache = getModel<ICache>(SchemaName);
+    const Cache = CacheModel;
     const data = await Cache.findOneAndDelete({
       key,
     });
@@ -247,7 +246,7 @@ export const removeAll = async (
   res: Response
 ): Promise<Response> => {
   try {
-    const Cache = getModel<ICache>(SchemaName);
+    const Cache = CacheModel;
     const data = await Cache.deleteMany({});
     return res.status(200).json({
       message: "Cache Removed",

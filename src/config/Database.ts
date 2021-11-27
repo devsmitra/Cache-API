@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { log } from "../helpers/Logger";
-import { CacheSchema, SchemaName } from "../models/Cache";
+import { SchemaName } from "../models/Cache";
 import { DB_PASSWORD, DB_USER, DB_URI } from "./Environment";
 
 // Create database connection
@@ -13,7 +13,6 @@ export const createConnection = async (): Promise<typeof mongoose> => {
     }
   );
   // Register schemas with the connection
-  registerSchema(conn, SchemaName, CacheSchema);
   log("Connected to MongoDB");
   return conn;
 };
@@ -25,6 +24,3 @@ const registerSchema = (conn: typeof mongoose, name: string, schema: any) => {
   });
   conn.model(SchemaName, CacheSchema);
 };
-
-// Get the model from the connection by name
-export const getModel = mongoose.model;
