@@ -1,9 +1,8 @@
 import mongoose, { Schema } from "mongoose";
+import { CacheSchema, SchemaName } from "../models/Cache";
 import { DB_PASSWORD, DB_USER, DB_URI } from "./env";
 
-main().catch((err) => console.log(err));
-
-async function main() {
+export const createConnection = async (): Promise<typeof mongoose> => {
   const conn = await mongoose.connect(
     `mongodb+srv://${DB_URI}?retryWrites=true&w=majority`,
     {
@@ -11,7 +10,18 @@ async function main() {
       pass: DB_PASSWORD,
     }
   );
-  const userSchema = new Schema({ name: String, email: String });
-  const UserModel = conn.model("User", userSchema);
+  registerSchema(conn, SchemaName, CacheSchema);
   console.log("Connected to MongoDB");
-}
+  return conn;
+};
+
+// Register a schema with the connection
+const registerSchema = (conn: typeof mongoose, name: string, schema: any) => {
+  const CacheSchema = new Schema(schema, {
+    timestamps: true,
+  });
+  conn.model(SchemaName, CacheSchema);
+};
+
+// Get the model from the connection by name
+export const getModel = mongoose.model;

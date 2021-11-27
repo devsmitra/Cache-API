@@ -1,8 +1,10 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 
+// Modules
 import "./config/env";
-import "./config/db";
+import { createConnection } from "./config/db";
+import cacheRouter from "./routes/Cache.route";
 
 const app: Application = express();
 const port = 3000;
@@ -10,12 +12,7 @@ const port = 3000;
 // Body parsing Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get("/", async (req: Request, res: Response): Promise<Response> => {
-  return res.status(200).send({
-    message: "Hello World!!!!",
-  });
-});
+app.use(cacheRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -33,10 +30,14 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   res.render("error");
 });
 
-try {
-  app.listen(port, (): void => {
-    console.log(`Connected successfully on port ${port}`);
-  });
-} catch (error) {
-  //   console.error(`Error occured: ${error.message}`);
-}
+const run = async (): Promise<void> => {
+  try {
+    await createConnection();
+    app.listen(port, (): void => {
+      console.log(`Connected successfully on port ${port}`);
+    });
+  } catch (error: any) {
+    console.error(`Error occurred: ${error.message}`);
+  }
+};
+run();
