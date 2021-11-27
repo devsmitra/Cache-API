@@ -1,7 +1,9 @@
 import mongoose, { Schema } from "mongoose";
+import { log } from "../helpers/Logger";
 import { CacheSchema, SchemaName } from "../models/Cache";
-import { DB_PASSWORD, DB_USER, DB_URI } from "./env";
+import { DB_PASSWORD, DB_USER, DB_URI } from "./Environment";
 
+// Create database connection
 export const createConnection = async (): Promise<typeof mongoose> => {
   const conn = await mongoose.connect(
     `mongodb+srv://${DB_URI}?retryWrites=true&w=majority`,
@@ -10,8 +12,9 @@ export const createConnection = async (): Promise<typeof mongoose> => {
       pass: DB_PASSWORD,
     }
   );
+  // Register schemas with the connection
   registerSchema(conn, SchemaName, CacheSchema);
-  console.log("Connected to MongoDB");
+  log("Connected to MongoDB");
   return conn;
 };
 

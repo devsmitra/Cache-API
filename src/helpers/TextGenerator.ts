@@ -1,4 +1,8 @@
-// Random text generator
+/**
+ * Generates random text for the given length.
+ * @param length : number
+ * @returns string
+ */
 export const generateText = (length: number) => {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
